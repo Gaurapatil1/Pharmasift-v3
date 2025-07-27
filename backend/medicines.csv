@@ -1,0 +1,6 @@
+brand,generic,brandPrice,genericPrice,brandImage,genericImage,sideEffects
+Dolo 650,Paracetamol,₹45.00,₹3.00,https://upload.wikimedia.org/wikipedia/commons/d/d1/Paracetamol_tablets.jpg,https://upload.wikimedia.org/wikipedia/commons/1/12/Paracetamol_generic.jpg,"Nausea; Rash; Liver damage (high dose)"
+Lipitor,Atorvastatin,₹160.00,₹12.00,https://upload.wikimedia.org/wikipedia/commons/4/47/Atorvastatin_tab.jpg,https://upload.wikimedia.org/wikipedia/commons/2/2a/Generic_Atorvastatin.jpg,"Muscle pain; Digestive issues; Liver enzyme changes"
+Augmentin 625,Amoxicillin + Clavulanic Acid,₹180.00,₹14.00,https://upload.wikimedia.org/wikipedia/commons/5/5e/Augmentin_pack.jpg,https://upload.wikimedia.org/wikipedia/commons/7/7c/Generic_Amoxicillin.jpg,"Diarrhea; Yeast infection; Stomach upset"
+Zifi 200,Cefixime,₹92.00,₹5.00,https://upload.wikimedia.org/wikipedia/commons/b/b8/Cefixime_tablets.jpg,https://upload.wikimedia.org/wikipedia/commons/e/e5/Generic_Cefixime.jpg,"Diarrhea; Abdominal pain; Allergic reactions"
+Taxim 500,Cefotaxime,₹140.00,₹9.00,https://upload.wikimedia.org/wikipedia/commons/a/a2/Cefotaxime_injection.jpg,https://upload.wikimedia.org/wikipedia/commons/3/31/Generic_Cefotaxime.jpg,"Injection site pain; Rash; Nausea"
