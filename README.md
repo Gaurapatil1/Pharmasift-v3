@@ -3,9 +3,9 @@
 
 Pharmasift helps users **compare expensive branded medicines** with their **affordable generic alternatives** — including **price**, **images**, and **side effects**. It's built for affordability awareness and future-ready with **AI assistance**.
 
-![Demo Screenshot](!["C:\Users\Administrator\Pictures\Screenshots\Screenshot 2025-07-27 174501.png"]()
-) <!-- Replace with your screenshot -->
-
+![Demo Screenshot](!["<img width="1311" height="633" alt="pharma1" src="https://github.com/user-attachments/assets/2176545d-fdd4-4b91-ad54-40a784eaf313" />
+.png"]()
+) 
 
 
 ## 🚀 Features
@@ -26,20 +26,7 @@ Pharmasift helps users **compare expensive branded medicines** with their **affo
 
 
 #pharmasift/
-├── backend/
-│   ├── main.py               # FastAPI backend
-│   ├── medicines.csv         # Real medicine data
-│   └── static/images/        # Medicine images
-├── frontend/
-│   ├── pages/
-│   ├── components/
-│   │   └── CompareSection.tsx # Compare UI with Tailwind
-│   └── public/
-│       └── images/            # Synced frontend images
-├── README.md
-└── package.json / requirements.txt
-
-
+<pre lang="markdown"> ``` #pharmasift/ ├── backend/ │ ├── main.py # FastAPI backend │ ├── medicines.csv # Real medicine data │ └── static/images/ # Medicine images ├── frontend/ │ ├── pages/ │ ├── components/ │ │ └── CompareSection.tsx # Compare UI with Tailwind │ └── public/ │ └── images/ # Synced frontend images ├── README.md └── package.json / requirements.txt ``` </pre>
 
 
 ## 🛠️ Tech Stack
