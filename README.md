@@ -3,7 +3,8 @@
 
 Pharmasift helps users **compare expensive branded medicines** with their **affordable generic alternatives** — including **price**, **images**, and **side effects**. It's built for affordability awareness and future-ready with **AI assistance**.
 
-![Demo Screenshot](public/demo.png) <!-- Replace with your screenshot -->
+![Demo Screenshot](![Uploading Screenshot 2025-07-27 174501.png…]()
+) <!-- Replace with your screenshot -->
 
 
 
