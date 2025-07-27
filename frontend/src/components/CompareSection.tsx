@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Medicine {
   brand: string;
@@ -17,7 +17,8 @@ export function CompareSection() {
   const [selected, setSelected] = useState<Medicine | null>(null);
 
   useEffect(() => {
-    fetch("http://localhost:8000/medicines")
+    // Make sure this matches your backend URL and port!
+    fetch("http://127.0.0.1:8000/medicines")
       .then((res) => res.json())
       .then((data) => setMedicines(data.medicines))
       .catch((err) => console.error("Error fetching medicines", err));
@@ -97,10 +98,12 @@ export function CompareSection() {
         <div className="text-center">
           <button
             onClick={handleCompare}
-            className="bg-black text-white px-8 py-3 rounded-full text-lg font-medium hover:bg-rose-600 transition"
+            disabled={!query.trim()}
+            className="bg-black text-white px-8 py-3 rounded-full text-lg font-medium hover:bg-rose-600 transition disabled:opacity-50"
           >
             Compare
           </button>
+
         </div>
 
         {/* Comparison Result */}
@@ -112,7 +115,7 @@ export function CompareSection() {
                 Generic Medicine
               </h3>
               <img
-                src={`http://localhost:8000/${selected.genericImage}`}
+                src={selected.genericImage}
                 alt={selected.generic}
                 className="w-40 h-32 mx-auto mb-4 object-contain rounded"
               />
@@ -136,7 +139,7 @@ export function CompareSection() {
                 Branded Medicine
               </h3>
               <img
-                src={`http://localhost:8000/${selected.brandImage}`}
+                src={selected.brandImage}
                 alt={selected.brand}
                 className="w-40 h-32 mx-auto mb-4 object-contain rounded"
               />
@@ -159,3 +162,4 @@ export function CompareSection() {
     </section>
   );
 }
+
