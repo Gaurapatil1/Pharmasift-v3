@@ -1,15 +1,9 @@
-Absolutely! Here's a clean and attractive `README.md` template for your medicine comparison AI project that can impress judges at a hackathon or freelance clients:
 
----
-
-```markdown
 # 💊 Pharmasift — Compare Branded & Generic Medicines with AI
 
 Pharmasift helps users **compare expensive branded medicines** with their **affordable generic alternatives** — including **price**, **images**, and **side effects**. It's built for affordability awareness and future-ready with **AI assistance**.
 
-![Demo Screenshot](public/demo.png) <!-- Replace with your screenshot -->
-
----
+![Screenshot](https://github.com/Gauravpatil1/Pharmasift-3/blob/main/IMG-20250726-WA0000.jpg?raw=true)
 
 ## 🚀 Features
 
@@ -22,29 +16,15 @@ Pharmasift helps users **compare expensive branded medicines** with their **affo
 - 📱 **Mobile-Responsive UI**
 - 🧠 **Powered by OpenAI + FastAPI**
 
----
+
 
 ## 📂 Project Structure
 
-```
 
-pharmasift/
-├── backend/
-│   ├── main.py               # FastAPI backend
-│   ├── medicines.csv         # Real medicine data
-│   └── static/images/        # Medicine images
-├── frontend/
-│   ├── pages/
-│   ├── components/
-│   │   └── CompareSection.tsx # Compare UI with Tailwind
-│   └── public/
-│       └── images/            # Synced frontend images
-├── README.md
-└── package.json / requirements.txt
 
-````
+#pharmasift/
+<pre lang="markdown"> ``` #pharmasift/ ├── backend/ │ ├── main.py # FastAPI backend │ ├── medicines.csv # Real medicine data │ └── static/images/ # Medicine images ├── frontend/ │ ├── pages/ │ ├── components/ │ │ └── CompareSection.tsx # Compare UI with Tailwind │ └── public/ │ └── images/ # Synced frontend images ├── README.md └── package.json / requirements.txt ``` </pre>
 
----
 
 ## 🛠️ Tech Stack
 
@@ -53,7 +33,7 @@ pharmasift/
 - **AI Integration:** OpenAI GPT-4 API (coming soon)
 - **Data Format:** CSV for easy scalability
 
----
+
 
 ## 🧪 Quick Start
 
@@ -75,7 +55,7 @@ npm run dev
 
 > 📦 Make sure `medicines.csv` and image paths are properly set!
 
----
+
 
 ## 📊 Sample Data (`medicines.csv`)
 
@@ -85,7 +65,7 @@ Dolo 650,Paracetamol,45,3,dolo.png,paracetamol.png,"Nausea;Rash"
 Lipitor,Atorvastatin,160,12,lipitor.png,atorvastatin.png,"Muscle pain;Liver issues"
 ```
 
----
+
 
 ## ✨ AI Features (In Progress)
 
@@ -93,13 +73,13 @@ Lipitor,Atorvastatin,160,12,lipitor.png,atorvastatin.png,"Muscle pain;Liver issu
 * 💬 Natural language chat comparison
 * 📈 Intelligent generic medicine suggestions
 
----
+
 
 ## 📱 Mobile Ready
 
 The UI is fully **responsive** — compare medicines from any device!
 
----
+
 
 ## 🤝 Contributions
 
@@ -114,13 +94,13 @@ Got ideas? Found data? PRs are welcome. Let’s make medicine affordable with te
 * 🧠 AI education projects
 * 🇮🇳 India-focused affordability tools
 
----
+
 
 ## 📃 License
 
 MIT License © 2025
 
----
+
 
 ## 🙌 Acknowledgements
 
@@ -130,21 +110,4 @@ MIT License © 2025
 
 ```
 
----
 
-### ✅ Tips to Win a Hackathon
-
-- Show the AI feature (even a demo of GPT explaining a side effect)
-- Add a chart/graph comparing cost saved
-- Build mobile-first design (already done with Tailwind)
-- Highlight real-life value: “Dolo 650 → ₹3 instead of ₹45!”
-
----
-
-Let me know if you'd like:
-- A **PDF pitch deck**
-- A **landing page**
-- A **live demo deploy guide (Vercel + Railway)**
-
-Want the README in Hindi too? I can translate it.
-```
