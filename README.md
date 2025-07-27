@@ -3,7 +3,7 @@
 
 Pharmasift helps users **compare expensive branded medicines** with their **affordable generic alternatives** — including **price**, **images**, and **side effects**. It's built for affordability awareness and future-ready with **AI assistance**.
 
-![Demo Screenshot](![Uploading Screenshot 2025-07-27 174501.png…]()
+![Demo Screenshot](!["C:\Users\Administrator\Pictures\Screenshots\Screenshot 2025-07-27 174501.png"]()
 ) <!-- Replace with your screenshot -->
 
 
@@ -25,7 +25,7 @@ Pharmasift helps users **compare expensive branded medicines** with their **affo
 
 
 
-pharmasift/
+#pharmasift/
 ├── backend/
 │   ├── main.py               # FastAPI backend
 │   ├── medicines.csv         # Real medicine data
