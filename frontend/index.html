@@ -1,18 +1,37 @@
 <!DOCTYPE html>
+<!-- 📌 Tells the browser this is an HTML5 document -->
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pharmasift</title>
+  <!-- 🌍 'lang' attribute helps with accessibility and SEO -->
 
-    <!-- ✅ Tailwind CDN -->
+  <head>
+    <!-- 🧠 Contains meta info about the page (not visible content) -->
+
+    <meta charset="UTF-8" />
+    <!-- 🔤 Tells browser to use UTF-8 (supports all languages and emojis) -->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 📱 Makes your page responsive on all screen sizes (like mobile phones) -->
+
+    <title>Pharmasift</title>
+    <!-- 🏷️ Sets the title that shows on the browser tab -->
+
+    <!-- ✅ Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 🎨 Loads Tailwind CSS directly from the internet so you can use utility classes in your HTML -->
   </head>
+
   <body>
+    <!-- 🖼️ Main content of the page goes inside <body> -->
+
     <div id="root"></div>
+    <!-- 📦 This is where your React app will be inserted ("root" is the mount point) -->
+
     <script type="module" src="/src/main.tsx"></script>
+    <!-- 🚀 Loads your main TypeScript React file (entry point of your app) -->
+    <!-- 🔗 'type="module"' allows you to use import/export in JS/TS files -->
   </body>
 </html>
+
 
 
 
