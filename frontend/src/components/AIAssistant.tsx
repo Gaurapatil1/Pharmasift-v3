@@ -1,4 +1,6 @@
-import { useState } from "react";
+// Description: AI Assistant component with chat and login functionality
+// AIAssistant.tsx
+import { useState, useEffect } from "react";
 import { useAuth } from "./authContext";
 import LoginModal from "./LoginModal";
 import AIAssistantChat from "./AIAssistantChat";
@@ -7,31 +9,36 @@ export default function AIAssistant() {
   const { token } = useAuth();
   const [showLogin, setShowLogin] = useState(false);
   const [showChat, setShowChat] = useState(false);
-  const [floatingVisible, setFloatingVisible] = useState(true); // 💬 button visibility
+  const [floatingVisible, setFloatingVisible] = useState(true);
 
   const handleClick = () => {
     if (!token) {
       setShowLogin(true);
     } else {
       setShowChat(true);
-      setFloatingVisible(false); // hide 💬 when chat opens
+      setFloatingVisible(false);
     }
   };
 
   const closeChat = () => {
     setShowChat(false);
-    setFloatingVisible(true); // show 💬 when chat closes
+    setFloatingVisible(true);
   };
+
+  useEffect(() => {
+    const handleOpenChat = () => {
+      setShowChat(true);
+      setShowLogin(false);
+      setFloatingVisible(false);
+    };
+    window.addEventListener("chat-open", handleOpenChat);
+    return () => window.removeEventListener("chat-open", handleOpenChat);
+  }, []);
 
   return (
     <>
-      {/* AI Chatbox */}
       {token && showChat && <AIAssistantChat onClose={closeChat} />}
-
-      {/* Login Modal */}
       {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
-
-      {/* 💬 Floating Button */}
       {floatingVisible && (
         <button
           onClick={handleClick}

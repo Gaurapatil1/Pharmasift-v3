@@ -19,11 +19,10 @@ const Navbar: React.FC = () => {
 
         {/* Navigation */}
         <nav
-          className={`md:flex space-x-6 text-lg font-medium ${
-            isOpen
+          className={`md:flex space-x-6 text-lg font-medium ${isOpen
               ? "block absolute top-full left-0 w-full bg-white px-4 py-4 md:static md:w-auto md:bg-transparent"
               : "hidden"
-          }`}
+            }`}
         >
           <Link
             to="/"
@@ -43,12 +42,13 @@ const Navbar: React.FC = () => {
           >
             Signup
           </Link>
-          <Link
-            to="/#how-it-works"
+          <a
+            href="#stepsContainer"
             className="block md:inline hover:text-blue-500 transition transform hover:scale-110"
           >
             How It Works
-          </Link>
+          </a>
+
           <Link
             to="/saved"
             className="block md:inline hover:text-blue-500 transition transform hover:scale-110"

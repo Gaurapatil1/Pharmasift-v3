@@ -1,10 +1,19 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const HeroSection: React.FC = () => {
+  const navigate = useNavigate();
+
+  // Scroll smoothly to the element with id "stepsContainer"
+  const scrollToHowItWorks = () => {
+    const element = document.getElementById("stepsContainer");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
-    <section
-      className="flex flex-col-reverse md:flex-row items-center justify-between px-4 sm:px-6 py-12 sm:py-16 max-w-7xl mx-auto gap-10 md:gap-0"
-    >
+    <section className="flex flex-col-reverse md:flex-row items-center justify-between px-4 sm:px-6 py-12 sm:py-16 max-w-7xl mx-auto gap-10 md:gap-0">
       {/* TEXT SECTION */}
       <div className="text-center md:text-left space-y-6 w-full md:w-1/2">
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-800 leading-tight">
@@ -19,14 +28,17 @@ const HeroSection: React.FC = () => {
         {/* BUTTONS */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start pt-4">
           <button
-            id="compare-btn"
+            id="relative"
             className="bg-blue-500 text-white px-6 py-3 rounded-full hover:bg-blue-700 transition-transform duration-300 transform hover:scale-105 text-center"
+           
+
           >
             Compare Now
           </button>
           <button
             id="howitworks-btn"
             className="bg-gray-700 text-white px-6 py-3 rounded-full hover:bg-gray-900 transition-transform duration-300 transform hover:scale-105 text-center"
+            onClick={scrollToHowItWorks} // Scroll instead of navigating
           >
             How It Works
           </button>
@@ -51,4 +63,6 @@ const HeroSection: React.FC = () => {
 };
 
 export default HeroSection;
+
+
 

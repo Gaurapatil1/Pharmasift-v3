@@ -1,21 +1,36 @@
-from fastapi import FastAPI, HTTPException, Depends, Header, Body
+from fastapi import FastAPI, HTTPException, Header, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
-import pandas as pd
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-# import openai  # NEW: import OpenAI client
+from urllib.parse import quote_plus
+from sqlalchemy import create_engine
+import pandas as pd
+from fastapi import Depends
+from sqlalchemy import text
 
-# === JWT CONFIG ===
-SECRET_KEY = "your-secret-key"  # Change in production
+
+# ------------------- Config -------------------
+SECRET_KEY = "your-secret-key"  # Change for production
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
+DB_USER = "pharma_user"
+DB_PASSWORD = quote_plus("@Gauravpatil211791")  # safely encode
+DB_HOST = "localhost"
+DB_PORT = 3306
+DB_NAME = "pharmasift"
+
+DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+engine = create_engine(DATABASE_URL)
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+# In-memory user storage — replace with real user table
 fake_users_db = {}
 
+# ------------------- Auth Utils -------------------
 def hash_password(password: str):
     return pwd_context.hash(password)
 
@@ -43,128 +58,156 @@ def get_current_user(authorization: str = Header(None)):
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid or expired token")
 
-# === FastAPI App ===
+# ------------------- App Setup -------------------
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Adjust for production
+    allow_origins=["http://localhost:5173"],  # your frontend
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# === Load medicines CSV ===
-df = pd.read_csv("medicines.csv")
-
-medicines_data = []
-for _, row in df.iterrows():
-    generic = row.get("short_composition1", "") or "Unknown"
-    side_effects = row["side_effects"].split(";") if pd.notna(row["side_effects"]) else []
-
-    try:
-        brand_price = float(row["price"])
-    except:
-        brand_price = 0.0
-
-    generic_price = round(brand_price * 0.4, 2) if brand_price > 0 else 0.0
-
-    medicines_data.append({
-        "brand": row["name"],
-        "generic": generic,
-        "brandPrice": f"₹{brand_price:.2f}" if brand_price > 0 else "N/A",
-        "genericPrice": f"₹{generic_price:.2f}" if generic_price > 0 else "N/A",
-        "brandImage": f"https://via.placeholder.com/150?text={row['name'].replace(' ', '+')}",
-        "genericImage": f"https://via.placeholder.com/150?text={generic.replace(' ', '+')}",
-        "sideEffects": side_effects,
-        "manufacturer": row.get("manufacturer_name", "Unknown"),
-        "type": row.get("type", "Unknown"),
-        "packSize": row.get("pack_size_label", "Unknown")
-    })
-
-# === Schemas ===
+# ------------------- Schemas -------------------
 class User(BaseModel):
     username: str
     password: str
 
-# === NEW: Schema for chat request
 class ChatRequest(BaseModel):
     message: str
 
-# === Routes ===
-
+# ------------------- Routes -------------------
 @app.get("/")
 def root():
     return {"message": "PharmaSift API is running"}
-
-@app.get("/medicines")
-def get_all_medicines():
-    return {"medicines": medicines_data}
-
-@app.get("/search")
-def search_medicines(query: str):
-    query = query.strip().lower()
-    matches = [
-        med["brand"]
-        for med in medicines_data
-        if query in med["brand"].lower()
-    ]
-    return {"suggestions": matches[:10]}
-
-@app.get("/medicine")
-def get_medicine_by_name(name: str):
-    name = name.lower()
-    for med in medicines_data:
-        if med["brand"].lower() == name:
-            return {"medicine": med}
-    return {"medicine": None}
-
 @app.post("/signup")
 def signup(user: User):
-    if user.username in fake_users_db:
-        raise HTTPException(status_code=400, detail="User already exists")
-    fake_users_db[user.username] = hash_password(user.password)
+    with engine.connect() as conn:
+        result = conn.execute(
+            text("SELECT COUNT(*) FROM users WHERE username = :username"),
+            {"username": user.username}
+        )
+        if result.fetchone()[0] > 0:
+            raise HTTPException(status_code=400, detail="User already exists")
+
+        hashed = hash_password(user.password)
+        conn.execute(
+            text("INSERT INTO users (username, hashed_password) VALUES (:username, :hashed)"),
+            {"username": user.username, "hashed": hashed}
+        )
+        conn.commit()  # <-- commit here
     return {"message": "Signup successful"}
+
 
 @app.post("/login")
 def login(user: User):
-    hashed = fake_users_db.get(user.username)
-    if not hashed or not verify_password(user.password, hashed):
-        raise HTTPException(status_code=401, detail="Invalid username or password")
-    token = create_access_token({"sub": user.username})
-    return {"access_token": token}
+    with engine.connect() as conn:
+        result = conn.execute(
+            text("SELECT hashed_password FROM users WHERE username = :username"),
+            {"username": user.username}
+        ).fetchone()
 
-@app.get("/ai-assist")
-def ai_assist(name: str, current_user: str = Depends(get_current_user)):
-    for med in medicines_data:
-        if med["brand"].lower() == name.lower():
-            return {
-                "ai_summary": f"{name.title()} is commonly used to relieve pain and reduce fever. Always consult a doctor before use.",
-                "user": current_user
-            }
-    return {"ai_summary": "Medicine not found."}
+        if not result:
+            raise HTTPException(status_code=401, detail="Invalid username or password")
 
-# === NEW: /chat endpoint with OpenAI ===
-# openai.api_key = "YOUR_OPENAI_API_KEY"  # Replace with your key or load from env
+        hashed_password = result[0]
+        print("Hashed from DB:", hashed_password)  # Debug print
 
-# @app.post("/chat")
-# def chat(request: ChatRequest, current_user: str = Depends(get_current_user)):
-#     system_prompt = (
-#         "You are a helpful assistant specializing in medicines. "
-#         "Answer questions about medicine names, prices, side effects, generic vs branded drugs, and usage."
-#     )
-#     try:
-#         response = openai.ChatCompletion.create(
-#             model="gpt-4",
-#             messages=[
-#                 {"role": "system", "content": system_prompt},
-#                 {"role": "user", "content": request.message}
-#             ],
-#             max_tokens=500,
-#             temperature=0.7,
-#         )
-#         ai_reply = response.choices[0].message.content
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=f"OpenAI API error: {str(e)}")
+        if not verify_password(user.password, hashed_password):
+            print("Password verification failed")  # Debug print
+            raise HTTPException(status_code=401, detail="Invalid username or password")
 
-#     return {"reply": ai_reply}
+        token = create_access_token({"sub": user.username})
+        return {"access_token": token}
+
+
+@app.get("/search")
+def search_medicines(query: str = Query(..., min_length=1)):
+    sql = """
+        SELECT name, short_composition1, price, manufacturer_name, pack_size_label
+        FROM medicines
+        WHERE LOWER(name) LIKE %s OR LOWER(short_composition1) LIKE %s
+        LIMIT 15
+    """
+    param = f"%{query.lower()}%"
+    df = pd.read_sql(sql, con=engine, params=(param, param))
+
+    results = []
+    for _, row in df.iterrows():
+        price_val = row["price"]
+        results.append({
+            "brand": row["name"],
+            "generic": row.get("short_composition1", "Unknown"),
+            "price": f"₹{price_val:.2f}" if price_val and price_val > 0 else "N/A",
+            "manufacturer": row.get("manufacturer_name", "Unknown"),
+            "packSize": row.get("pack_size_label", "Unknown")
+        })
+
+    return {
+        "suggestions": [r["brand"] for r in results],
+        "results": results
+    }
+
+@app.get("/medicines")
+def get_all_medicines():
+    sql = """
+        SELECT name AS brand, short_composition1 AS generic, price, 
+               manufacturer_name, type, pack_size_label 
+        FROM medicines 
+        LIMIT 1000
+    """
+    df = pd.read_sql(sql, con=engine)
+
+    def format_row(row):
+        price = row["price"]
+        return {
+            "brand": row["brand"],
+            "generic": row.get("generic", "Unknown"),
+            "brandPrice": f"₹{price:.2f}" if price and price > 0 else "N/A",
+            "genericPrice": f"₹{round(price * 0.4, 2):.2f}" if price and price > 0 else "N/A",
+            "manufacturer": row.get("manufacturer_name", "Unknown"),
+            "type": row.get("type", "Unknown"),
+            "packSize": row.get("pack_size_label", "Unknown"),
+            "sideEffects": []
+        }
+
+    return {"medicines": [format_row(row) for _, row in df.iterrows()]}
+
+@app.get("/medicine")
+def get_medicine_by_name(name: str):
+    sql = """
+        SELECT name, short_composition1, price, manufacturer_name, 
+               type, pack_size_label, side_effects
+        FROM medicines
+        WHERE LOWER(name) LIKE %s
+        ORDER BY CHAR_LENGTH(name) ASC
+        LIMIT 1
+    """
+    param = f"%{name.lower().strip()}%"
+    df = pd.read_sql(sql, con=engine, params=(param,))
+
+    if df.empty:
+        return {"medicine": None}
+
+    row = df.iloc[0]
+    side_effects = [s.strip() for s in (row.get("side_effects") or "").split(";") if s.strip()]
+
+    return {
+        "medicine": {
+            "brand": row["name"],
+            "generic": row.get("short_composition1", "Unknown"),
+            "brandPrice": f"₹{row['price']:.2f}" if row["price"] and row["price"] > 0 else "N/A",
+            "genericPrice": f"₹{round(row['price'] * 0.4, 2):.2f}" if row["price"] and row["price"] > 0 else "N/A",
+            "sideEffects": side_effects,
+            "manufacturer": row.get("manufacturer_name", "Unknown"),
+            "type": row.get("type", "Unknown"),
+            "packSize": row.get("pack_size_label", "Unknown")
+        }
+    }
+
+@app.post("/chat")
+def chat_with_ai(request: ChatRequest, user: str = Depends(get_current_user)):
+    # Simple fake AI response (replace with real model/integration)
+    reply = f"AI Response: Here’s some info about '{request.message}' (simulated)."
+    return {"reply": reply}

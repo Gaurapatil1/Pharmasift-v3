@@ -1,3 +1,4 @@
+// AIAssistantChat.tsx
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "./authContext";
 

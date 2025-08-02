@@ -12,9 +12,13 @@ export default function LoginModal({ onClose }: Props) {
   const [password, setPassword] = useState("");
   const [isSignup, setIsSignup] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
+    setError("");
+    setLoading(true);
     const endpoint = isSignup ? "/signup" : "/login";
+
     try {
       const res = await fetch(`http://127.0.0.1:8000${endpoint}`, {
         method: "POST",
@@ -25,15 +29,18 @@ export default function LoginModal({ onClose }: Props) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || "Auth failed");
 
-      if (!isSignup) {
-        login(data.access_token);
-        onClose();
-      } else {
+      if (isSignup) {
         alert("Signup successful! Now login.");
         setIsSignup(false);
+      } else {
+        login(data.access_token);
+        onClose();
+        setTimeout(() => window.dispatchEvent(new Event("chat-open")), 50);
       }
     } catch (err: any) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -46,6 +53,7 @@ export default function LoginModal({ onClose }: Props) {
 
         <input
           type="text"
+          autoFocus
           placeholder="Username"
           className="w-full mb-3 p-2 border rounded"
           value={username}
@@ -61,10 +69,11 @@ export default function LoginModal({ onClose }: Props) {
         {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
 
         <button
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 mb-2"
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 mb-2 disabled:opacity-50"
           onClick={handleSubmit}
+          disabled={loading}
         >
-          {isSignup ? "Sign Up" : "Login"}
+          {loading ? "Please wait..." : isSignup ? "Sign Up" : "Login"}
         </button>
 
         <button

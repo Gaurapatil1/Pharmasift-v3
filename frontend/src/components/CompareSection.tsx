@@ -51,24 +51,35 @@ export function CompareSection() {
     setQuery(name);
     setSuggestions([]);
     setNotFound(false);
-    setAiResponse(null);  // reset AI response on new select
+    setAiResponse(null); // reset AI response on new select
   };
 
-  const handleCompare = () => {
-    const med = medicines.find(
-      (m) => m.brand.toLowerCase() === query.trim().toLowerCase()
-    );
-    if (!med) {
+  const handleCompare = async () => {
+    const name = query.trim();
+    if (!name) return;
+  
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/medicine?name=${encodeURIComponent(name)}`);
+      const data = await res.json();
+  
+      if (!data.medicine) {
+        setSelected(null);
+        setNotFound(true);
+        setAiResponse(null);
+        return;
+      }
+  
+      setSelected(data.medicine);
+      setNotFound(false);
+      setAiResponse(null);
+    } catch (error) {
+      console.error("Error fetching medicine details:", error);
       setSelected(null);
       setNotFound(true);
       setAiResponse(null);
-      return;
     }
-    setSelected(med);
-    setNotFound(false);
-    setAiResponse(null);
   };
-
+  
   const handleSave = (medicine: Medicine) => {
     const saved: Medicine[] = JSON.parse(localStorage.getItem("saved_medicines") || "[]");
     const exists = saved.some((m) => m.brand === medicine.brand);
@@ -214,8 +225,8 @@ export function CompareSection() {
               </div>
 
               {/* Branded Medicine Card */}
-              <div className="bg-white p-6 rounded-xl shadow-md border border-red-200 text-center hover:scale-105 transition-transform duration-500">
-                <h3 className="text-xl font-semibold text-red-600 mb-3">
+              <div className="bg-white p-6 rounded-xl shadow-md border border-rose-200 text-center hover:scale-105 transition-transform duration-500">
+                <h3 className="text-xl font-semibold text-rose-600 mb-3">
                   Branded Medicine
                 </h3>
                 <p className="text-gray-700"><strong>Name:</strong> {selected.brand}</p>
@@ -246,32 +257,25 @@ export function CompareSection() {
               </div>
             </div>
 
-            {/* Show "Ask AI" button if any missing info */}
             {hasMissingInfo(selected) && (
-              <div className="text-center mt-6">
+              <div className="mt-10 text-center">
                 <button
                   onClick={handleAskAI}
                   disabled={loadingAI}
-                  className="inline-block bg-blue-600 text-white px-6 py-3 rounded-full hover:bg-blue-700 transition disabled:opacity-50"
+                  className="px-8 py-3 rounded-full bg-purple-700 text-white text-lg font-semibold hover:bg-purple-600 transition disabled:opacity-60"
                 >
-                  {loadingAI ? "Generating AI Response..." : "Ask AI for Missing Info"}
+                  {loadingAI ? "Fetching AI Info..." : "Ask AI for Missing Info"}
                 </button>
+                {aiResponse && (
+                  <pre className="mt-4 p-4 bg-purple-100 rounded-lg text-left whitespace-pre-wrap text-gray-700">
+                    {aiResponse}
+                  </pre>
+                )}
               </div>
             )}
-
-            {/* AI Agent Response */}
-            <div className="mt-12 bg-white p-6 rounded-xl shadow border border-blue-200">
-              
-
-              {aiResponse && (
-                <pre className="bg-gray-100 p-4 rounded text-gray-800 whitespace-pre-wrap">{aiResponse}</pre>
-              )}
-            </div>
           </>
         )}
       </div>
     </section>
   );
 }
-
-

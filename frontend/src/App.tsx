@@ -16,23 +16,29 @@ import SignupPage from "./components/SignupPage";
 const App: React.FC = () => {
   return (
     <AuthProvider>
-      <div className="relative">
+      {/* Full-height flex column layout */}
+      <div className="min-h-screen flex flex-col">
         <Navbar />
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <HeroSection />
-                <CompareSection />
-                <Howitworks />
-              </>
-            }
-          />
-          <Route path="/saved" element={<SavedMedicines />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-        </Routes>
+
+        {/* Content section grows and pushes footer down if needed */}
+        <main className="flex-grow">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <>
+                  <HeroSection />
+                  <CompareSection />
+                  <Howitworks />
+                </>
+              }
+            />
+            <Route path="/saved" element={<SavedMedicines />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+          </Routes>
+        </main>
+
         <AIAssistant />
         <Footer />
       </div>
@@ -41,5 +47,3 @@ const App: React.FC = () => {
 };
 
 export default App;
-
-
